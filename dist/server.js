@@ -6,25 +6,38 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const http_1 = require("http");
 const express_1 = __importDefault(require("express"));
 const readHandler_1 = require("./readHandler");
+const cors_1 = __importDefault(require("cors"));
+const http_proxy_1 = __importDefault(require("http-proxy"));
+const helmet_1 = __importDefault(require("helmet"));
 const port = 5005;
 const expressApp = (0, express_1.default)();
-// expressApp.get("/favicon.ico", (req, resp) => {
-//     resp.statusCode = 404;
-//     resp.end();
-// });
-//expressApp.get("*", basicHandler);
+expressApp.use((req, resp, next) => {
+    resp.setHeader("Content-Security-Policy", "img-src 'self' ");
+    next();
+});
+expressApp.use((0, helmet_1.default)({
+    contentSecurityPolicy: {
+        directives: {
+            imgSrc: "'self'",
+            scriptSrcAttr: "'none'",
+            scriptSrc: "'self'",
+            connectSrc: "'self' ws://localhost:5005",
+        },
+    },
+}));
+expressApp.use((0, cors_1.default)({
+    origin: "http://localhost:5100",
+}));
+const proxy = http_proxy_1.default.createProxyServer({
+    target: "http://localhost:5100",
+    ws: true,
+});
 expressApp.use(express_1.default.json());
 expressApp.post("/read", readHandler_1.readHandler);
-expressApp.get("/sendcity", (req, resp) => {
-    resp.sendFile("city.png", { root: "static" });
-});
-expressApp.get("/downloadcity", (req, res) => {
-    res.download("static/city.png");
-});
-expressApp.get("/json", (req, resp) => {
-    resp.json("{name: Bob}");
-});
 expressApp.use(express_1.default.static("static"));
 expressApp.use(express_1.default.static("node_modules/bootstrap/dist"));
+expressApp.use(express_1.default.static("dist/client"));
+expressApp.use((req, res) => proxy.web(req, res));
 const server = (0, http_1.createServer)(expressApp);
+server.on("upgrade", (req, socket, head) => proxy.ws(req, socket, head));
 server.listen(port, () => console.log(`HTTP Server listening on port ${port}`));
