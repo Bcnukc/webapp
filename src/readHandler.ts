@@ -1,6 +1,12 @@
 import { Request, Response } from "express";
-
-export const readHandler = (req: Request, resp: Response) => {
-  resp.cookie("sessionID", "mysceretcode");
-  req.pipe(resp);
+import { readFile } from "fs/promises";
+export const readHandler = async (req: Request, resp: Response) => {
+  try {
+    resp.setHeader("Content-Type", "application/json");
+    resp.write(await readFile("data.json"));
+    debugger;
+  } catch (err) {
+    resp.writeHead(500);
+  }
+  resp.end();
 };

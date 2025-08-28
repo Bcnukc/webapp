@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "server": "tsc-watch --onsuccess \"node dist/server.js\"",
-    "client": "webpack server",
+    "server": "tsc-watch --noClear --onsuccess \"node dist/server.js\"",
+    "client": "webpack serve",
     "start": "npm-run-all --parallel server client",
-    "prepare": "husky"
+    "test": "node --test --watch"
   },
   "keywords": [],
   "author": "",

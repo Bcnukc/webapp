@@ -1,8 +1,16 @@
- Dependencies
-node_modules/
+# Dependencies
+/node_modules
 
-# Build folder
-dist/
+# Compiled TypeScript files
+/dist
 
-# Log files
-*.log
+# Editor configuration
+/.vscode
+
+# Environment variables
+.env
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

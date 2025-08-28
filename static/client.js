@@ -10,11 +10,11 @@ sendReq = async () => {
   }
   const response = await fetch(requestUrl, {
     method: "POST",
-    body: document.getElementById("input").value,
+    body: JSON.stringify(payload),
     headers: {
       "Content-Type": "application/json",
     },
   });
   document.getElementById("msg").textContent = response.statusText;
-  document.getElementById("body").innerHTML = await response.text();
+  document.getElementById("body").textContent = `Resp:${await response.text()}`;
 };

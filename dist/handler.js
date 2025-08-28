@@ -62,3 +62,4 @@ const basicHandler = (req, resp) => {
     resp.end();
 };
 exports.basicHandler = basicHandler;
+//# sourceMappingURL=handler.js.map
